@@ -56,3 +56,35 @@ LANGCHAIN_TRACING_V2=true
 - Add non-binary likkert style evalutors. 
 - Experiment with Anthropic's [Petri Evaluation Agent](https://alignment.anthropic.com/2025/petri/). I was reading the blog post and found a lot of interesting topics and tools that could be used on this project, specifially for safety. Altough the project is geared towards basing frontier models and their interactions with tools, we can craete similar testing methods to see where our RAG lacks. 
 
+## Architecture Overview
+
+The following diagram outlines the document processing and retrieval pipeline used to prepare and evaluate the Bridgeport milling machine manuals.  
+It illustrates how PDF manuals are processed through OCR and divided into two data flows — one for image data (dense captions and CSV creation) and another for textual Markdown (chunking and embedding for RAG).
+
+```mermaid
+graph TD
+
+    %% --- Input Stage ---
+    A[PDF File] --> B[Mistral OCR]
+
+    %% --- Split into two parallel data paths ---
+    B --> C1[Extracted Images]
+    B --> C2[Extracted Markdown]
+
+    %% --- Image Path ---
+    subgraph "Image Processing Path"
+        C1 --> D1[Store Images in Folder]
+        D1 --> E1[Generate Dense Captions]
+        E1 --> F1[Create CSV (Image + Caption Data)]
+    end
+
+    %% --- Text Path ---
+    subgraph "Text Processing Path"
+        C2 --> D2[Chunk Text Data]
+        D2 --> E2[Embed Chunks into Vector Store]
+        E2 --> F2[Retrieval-Augmented Generation (RAG)]
+    end
+
+    %% --- Layout Connections ---
+    F1 -.-> F2
+    F2 -.-> F1
