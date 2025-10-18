@@ -1,4 +1,4 @@
-# Simple Evaluation Playground
+sou# Simple Evaluation Playground
 
 This repository contains a lightweight retrieval-augmented generation (RAG) evaluation workflow centered on the Bridgeport Series 1 milling machine manuals. It couples a FAISS vector store of OCR'd documentation with LangChain, LangGraph, and LangSmith tooling so you can build, run, and grade question‑answering experiments quickly.
 
